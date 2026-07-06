@@ -26,6 +26,11 @@ click_delay = 0.5
 scroll_delay = 0.2
 scroll_time = 0
 
+dragging = False
+
+double_click_time = 0
+double_click_delay = 0.5
+
 while True:
 
     success, img = cap.read()
@@ -46,10 +51,18 @@ while True:
         x3, y3 = lmList[12][1], lmList[12][2]
         # Ring Finger
         x4, y4 = lmList[16][1], lmList[16][2]
-
+        # Pinky Finger
+        x5, y5 = lmList[20][1], lmList[20][2]
+        
+        index_up = lmList[8][2] < lmList[6][2]
+        middle_up = lmList[12][2] < lmList[10][2]
+        ring_up = lmList[16][2] < lmList[14][2]
+        pinky_up = lmList[20][2] < lmList[18][2]
+        
         distance = math.hypot(x2 - x1, y2 - y1)
         right_distance = math.hypot(x2 - x3, y2 - y3)
         scroll_distance = math.hypot(x2 - x4, y2 - y4)
+        double_distance = math.hypot(x2 - x5, y2 - y5)
 
         cam_h, cam_w, _ = img.shape
 
@@ -127,6 +140,32 @@ while True:
                 )
 
             scroll_time = time.time()
+                    # Drag & Drop
+
+        if (not index_up and
+           not middle_up and
+           not ring_up and
+           not pinky_up):
+
+            if not dragging:
+                pyautogui.mouseDown()
+                dragging = True
+
+                cv2.putText(
+                    img,
+                    "DRAGGING",
+                    (20, 210),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (0, 0, 255),
+                    3
+                )
+
+        else:
+
+            if dragging:
+                pyautogui.mouseUp()
+                dragging = False
 
         cv2.circle(img, (x1, y1), 12, (255, 0, 255), cv2.FILLED)
 
