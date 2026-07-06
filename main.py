@@ -23,6 +23,9 @@ clocX, clocY = 0, 0
 click_time = 0
 click_delay = 0.5
 
+scroll_delay = 0.2
+scroll_time = 0
+
 while True:
 
     success, img = cap.read()
@@ -39,8 +42,14 @@ while True:
 
         x1, y1 = lmList[8][1], lmList[8][2]
         x2, y2 = lmList[4][1], lmList[4][2]
+        # Middle Finger
+        x3, y3 = lmList[12][1], lmList[12][2]
+        # Ring Finger
+        x4, y4 = lmList[16][1], lmList[16][2]
 
         distance = math.hypot(x2 - x1, y2 - y1)
+        right_distance = math.hypot(x2 - x3, y2 - y3)
+        scroll_distance = math.hypot(x2 - x4, y2 - y4)
 
         cam_h, cam_w, _ = img.shape
 
@@ -74,6 +83,50 @@ while True:
                 (0, 255, 0),
                 3
             )
+            
+        if right_distance < 20 and current_time - click_time > click_delay:
+            pyautogui.rightClick()
+            click_time = current_time
+
+            cv2.putText(
+                img,
+                "RIGHT CLICK",
+                (20, 90),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                1,
+                (255, 0, 0),
+                3
+            )    
+            
+        if scroll_distance < 20 and time.time() - scroll_time > scroll_delay:
+
+            if y4 < y2:
+                pyautogui.scroll(150)
+
+                cv2.putText(
+                    img,
+                    "SCROLL UP",
+                    (20, 130),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (255, 255, 0),
+                    3
+                )
+
+            else:
+                pyautogui.scroll(-150)
+
+                cv2.putText(
+                    img,
+                    "SCROLL DOWN",
+                    (20, 130),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    1,
+                    (255, 255, 0),
+                    3
+                )
+
+            scroll_time = time.time()
 
         cv2.circle(img, (x1, y1), 12, (255, 0, 255), cv2.FILLED)
 

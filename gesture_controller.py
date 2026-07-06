@@ -1,25 +1,20 @@
+import math
+
+
 class GestureController:
 
-    def getFingerCount(self, lmList):
+    @staticmethod
+    def distance(x1, y1, x2, y2):
+        return math.hypot(x2 - x1, y2 - y1)
 
-        if len(lmList) == 0:
-            return 0
+    @staticmethod
+    def is_left_click(distance):
+        return distance < 20
 
-        fingers = []
+    @staticmethod
+    def is_right_click(distance):
+        return distance < 20
 
-        tipIds = [4, 8, 12, 16, 20]
-
-        # Thumb
-        if lmList[4][1] > lmList[3][1]:
-            fingers.append(1)
-        else:
-            fingers.append(0)
-
-        # Other fingers
-        for i in range(1, 5):
-            if lmList[tipIds[i]][2] < lmList[tipIds[i]-2][2]:
-                fingers.append(1)
-            else:
-                fingers.append(0)
-
-        return fingers.count(1)
+    @staticmethod
+    def is_scroll(distance):
+        return distance < 20
